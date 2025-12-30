@@ -1,13 +1,22 @@
 // App.js
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import { View, TouchableOpacity, Text, Platform, useColorScheme } from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  Platform,
+  useColorScheme,
+} from 'react-native';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { navLight, navDark } from './constants/theme';
 import { I18nProvider, useI18n } from './i18n/i18n';
@@ -22,7 +31,7 @@ import OnboardingScreen from './screens/OnboardingScreen';
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
 
-/* Root tabs  */
+/* ROOT TABS */
 
 function RootTabs() {
   const { t } = useI18n();
@@ -64,7 +73,6 @@ function RootTabs() {
           headerStyle: { backgroundColor: headerColor },
           headerTintColor: '#fff',
           headerTitleAlign: 'center',
-          headerTitleStyle: { fontWeight: '700' },
           headerTitle: title,
 
           headerLeft: () => (
@@ -84,9 +92,11 @@ function RootTabs() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name={iconName} size={size} color={color} />
           ),
+
           tabBarLabel: title,
           tabBarStyle: Platform.select({
             android: { paddingBottom: 4, height: 58 },
+            web: { height: 60 },
             default: {},
           }),
         };
@@ -94,7 +104,6 @@ function RootTabs() {
     >
       <Tabs.Screen name="Home" component={HomeScreen} />
       <Tabs.Screen name="Checklist" component={ChecklistScreen} />
-
       <Tabs.Screen
         name="Quiz"
         component={QuizScreen}
@@ -103,7 +112,6 @@ function RootTabs() {
             <TouchableOpacity
               onPress={() => navigation.navigate('Home')}
               style={{ marginLeft: 10, flexDirection: 'row', alignItems: 'center' }}
-              accessibilityRole="button"
             >
               <Ionicons name="chevron-back" size={24} color="#fff" />
               <Text style={{ color: '#fff', fontWeight: '600', marginLeft: 4 }}>
@@ -113,31 +121,31 @@ function RootTabs() {
           ),
         })}
       />
-
       <Tabs.Screen name="Learn" component={LearnScreen} />
     </Tabs.Navigator>
   );
 }
 
-/* Deep linking  */
+/*  DEEP LINKING (WEB)  */
 
 const linking = {
-  prefixes: ['phishshield://', 'https://phishshield.local'],
+  prefixes: ['http://localhost:8081'],
   config: {
     screens: {
       Root: {
         screens: {
-          Home: 'home',
+          Home: '',
           Checklist: 'checklist',
-          Quiz: 'quiz/:category',
+          Quiz: 'quiz',
           Learn: 'learn',
         },
       },
+      Onboarding: 'onboarding',
     },
   },
 };
 
-/* App root  */
+/*  APP ROOT  */
 
 function AppRoot() {
   const [ready, setReady] = React.useState(false);
@@ -155,27 +163,31 @@ function AppRoot() {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {firstRun && <Stack.Screen name="Onboarding" component={OnboardingScreen} />}
+      {firstRun && (
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+      )}
       <Stack.Screen name="Root" component={RootTabs} />
     </Stack.Navigator>
   );
 }
 
-/* App */
+/* APP  */
 
 export default function App() {
   const scheme = useColorScheme();
 
   return (
-    <SafeAreaProvider>
-      <I18nProvider defaultLang="no">
-        <NavigationContainer
-          linking={linking}
-          theme={scheme === 'dark' ? navDark : navLight}
-        >
-          <AppRoot />
-        </NavigationContainer>
-      </I18nProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <I18nProvider defaultLang="no">
+          <NavigationContainer
+            linking={linking}
+            theme={scheme === 'dark' ? navDark : navLight}
+          >
+            <AppRoot />
+          </NavigationContainer>
+        </I18nProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
