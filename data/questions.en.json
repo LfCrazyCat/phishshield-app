@@ -1,0 +1,81 @@
+{
+  "avsender": [
+    {
+      "id": "intro_avsender",
+      "prompt": "✉️ Sender — learn to recognize fake emails and messages.",
+      "why": "Always verify the sender address and domain before clicking or responding."
+    },
+    { "id": "avs_1", "prompt": "SMS from the “Tax Authority” about tax money – unknown number.", "isPhish": true, "why": "Authorities rarely send links from random numbers." },
+    { "id": "avs_2", "prompt": "Email from your bank, but sender is support@bank-login123.com.", "isPhish": true, "why": "Fake domain." },
+    { "id": "avs_3", "prompt": "Email from IT department via known internal channel.", "isPhish": false, "why": "Expected sender and channel." },
+    { "id": "avs_4", "prompt": "SMS from Posten with delivery notice – foreign number.", "isPhish": true, "why": "Spoofed sender name." },
+    { "id": "avs_5", "prompt": "Calendar invitation from a colleague you work with daily.", "isPhish": false, "why": "Normal collaboration." },
+    { "id": "avs_6", "prompt": "Email from HR, but sender name is spelled “HHR”.", "isPhish": true, "why": "Small typos are a red flag." },
+    { "id": "avs_7", "prompt": "Teams message from your manager about a quick meeting.", "isPhish": false, "why": "Internal channel and plausible request." },
+    { "id": "avs_8", "prompt": "Email from “Microsoft Support” with domain microsofft.help.", "isPhish": true, "why": "Imitates a known brand." },
+    { "id": "avs_9", "prompt": "Push notification from your bank’s official app.", "isPhish": false, "why": "Official app context." },
+    { "id": "avs_10", "prompt": "Email from “Finance” with no signature or contact details.", "isPhish": true, "why": "Missing sender verification." }
+  ],
+
+  "lenker": [
+    {
+      "id": "intro_lenker",
+      "prompt": "🔗 Links — learn to identify fake URLs and deceptive domains.",
+      "why": "Always inspect links carefully before clicking."
+    },
+    { "id": "lnk_1", "prompt": "Link to http://vipps-no-login.secureupdate.com", "isPhish": true, "why": "Wrong top-level domain." },
+    { "id": "lnk_2", "prompt": "SharePoint link from colleague to company workspace.", "isPhish": false, "why": "Matches expected domain." },
+    { "id": "lnk_3", "prompt": "Message: “Watch this video of you!” with short link.", "isPhish": true, "why": "Social engineering." },
+    { "id": "lnk_4", "prompt": "Email link pointing to bankn0.no (zero instead of letter o).", "isPhish": true, "why": "Typo-squatting." },
+    { "id": "lnk_5", "prompt": "QR code on internal poster linking to intranet.", "isPhish": false, "why": "Known internal domain." },
+    { "id": "lnk_6", "prompt": "Login link with long encoded parameters.", "isPhish": true, "why": "Obfuscated purpose." },
+    { "id": "lnk_7", "prompt": "Official link to App Store / Google Play.", "isPhish": false, "why": "Trusted platform." },
+    { "id": "lnk_8", "prompt": "Link text looks correct but points elsewhere.", "isPhish": true, "why": "Deceptive link text." },
+    { "id": "lnk_9", "prompt": "Link to https://nav.no from @nav.no address.", "isPhish": false, "why": "Correct domain and sender." },
+    { "id": "lnk_10", "prompt": "PDF with a “Log in” button opening unknown site.", "isPhish": true, "why": "Attachment-based phishing." }
+  ],
+
+  "okonomi": [
+    {
+      "id": "intro_okonomi",
+      "prompt": "💰 Economy — fake payments and financial scams.",
+      "why": "Be cautious of unexpected payment requests."
+    },
+    { "id": "eco_1", "prompt": "You won 1 million – pay a fee to receive it.", "isPhish": true, "why": "Advance-fee scam." },
+    { "id": "eco_2", "prompt": "Expected invoice from known supplier.", "isPhish": false, "why": "Valid business context." },
+    { "id": "eco_3", "prompt": "VAT refund email from fake government domain.", "isPhish": true, "why": "Impersonation of authorities." },
+    { "id": "eco_4", "prompt": "Vipps request from friend for shared expense.", "isPhish": false, "why": "Known sender." },
+    { "id": "eco_5", "prompt": "Urgent electricity bill with foreign payment link.", "isPhish": true, "why": "Suspicious payment request." },
+    { "id": "eco_6", "prompt": "Supplier requests bank account change via email.", "isPhish": true, "why": "CEO fraud pattern." },
+    { "id": "eco_7", "prompt": "Bank app notifies you of expected invoice.", "isPhish": false, "why": "Official app." },
+    { "id": "eco_8", "prompt": "SMS: “You owe money” with short link.", "isPhish": true, "why": "Payment pressure." },
+    { "id": "eco_9", "prompt": "Receipt email from store you just shopped at.", "isPhish": false, "why": "Expected transaction." },
+    { "id": "eco_10", "prompt": "Request for card details to issue refund.", "isPhish": true, "why": "Never share card details." }
+  ],
+
+  "kjarlighet": [
+    {
+      "id": "intro_kjarlighet",
+      "prompt": "💞 Romance scams — emotional manipulation.",
+      "why": "Scammers build trust before asking for money."
+    },
+    { "id": "lov_1", "prompt": "Online partner asks for emergency money.", "isPhish": true, "why": "Romance scam." },
+    { "id": "lov_2", "prompt": "Friend invites you for coffee via normal chat.", "isPhish": false, "why": "No red flags." },
+    { "id": "lov_3", "prompt": "Match quickly asks to move conversation to WhatsApp.", "isPhish": true, "why": "Common scam tactic." },
+    { "id": "lov_4", "prompt": "Person promises visit but asks you to pay travel.", "isPhish": true, "why": "Classic romance scam." },
+    { "id": "lov_5", "prompt": "Long-term contact suggests a video call.", "isPhish": false, "why": "Identity verification." }
+  ],
+
+  "passord2fa": [
+    {
+      "id": "intro_passord2fa",
+      "prompt": "🔐 Passwords and two-factor authentication.",
+      "why": "Never share passwords or authentication codes."
+    },
+    { "id": "pwd_1", "prompt": "Email asks you to send your password.", "isPhish": true, "why": "Passwords are never requested." },
+    { "id": "pwd_2", "prompt": "You receive a 2FA code after logging in.", "isPhish": false, "why": "Expected behavior." },
+    { "id": "pwd_3", "prompt": "2FA code received without login attempt.", "isPhish": true, "why": "Possible account attack." },
+    { "id": "pwd_4", "prompt": "You reuse the same password everywhere.", "isPhish": true, "why": "High risk behavior." },
+    { "id": "pwd_5", "prompt": "You use a password manager.", "isPhish": false, "why": "Best practice." }
+  ]
+}
