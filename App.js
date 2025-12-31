@@ -9,14 +9,13 @@ import {
   useColorScheme,
 } from 'react-native';
 
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { navLight, navDark } from './constants/theme';
 import { I18nProvider, useI18n } from './i18n/i18n';
@@ -31,7 +30,7 @@ import OnboardingScreen from './screens/OnboardingScreen';
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
 
-/* ROOT TABS */
+/* ---------------- ROOT TABS ---------------- */
 
 function RootTabs() {
   const { t } = useI18n();
@@ -73,6 +72,7 @@ function RootTabs() {
           headerStyle: { backgroundColor: headerColor },
           headerTintColor: '#fff',
           headerTitleAlign: 'center',
+          headerTitleStyle: { fontWeight: '700' },
           headerTitle: title,
 
           headerLeft: () => (
@@ -92,7 +92,6 @@ function RootTabs() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name={iconName} size={size} color={color} />
           ),
-
           tabBarLabel: title,
           tabBarStyle: Platform.select({
             android: { paddingBottom: 4, height: 58 },
@@ -104,6 +103,7 @@ function RootTabs() {
     >
       <Tabs.Screen name="Home" component={HomeScreen} />
       <Tabs.Screen name="Checklist" component={ChecklistScreen} />
+
       <Tabs.Screen
         name="Quiz"
         component={QuizScreen}
@@ -111,41 +111,33 @@ function RootTabs() {
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => navigation.navigate('Home')}
-              style={{ marginLeft: 10, flexDirection: 'row', alignItems: 'center' }}
+              style={{
+                marginLeft: 10,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
             >
               <Ionicons name="chevron-back" size={24} color="#fff" />
-              <Text style={{ color: '#fff', fontWeight: '600', marginLeft: 4 }}>
+              <Text
+                style={{
+                  color: '#fff',
+                  fontWeight: '600',
+                  marginLeft: 4,
+                }}
+              >
                 {t('actions.back')}
               </Text>
             </TouchableOpacity>
           ),
         })}
       />
+
       <Tabs.Screen name="Learn" component={LearnScreen} />
     </Tabs.Navigator>
   );
 }
 
-/*  DEEP LINKING (WEB)  */
-
-const linking = {
-  prefixes: ['http://localhost:8081'],
-  config: {
-    screens: {
-      Root: {
-        screens: {
-          Home: '',
-          Checklist: 'checklist',
-          Quiz: 'quiz',
-          Learn: 'learn',
-        },
-      },
-      Onboarding: 'onboarding',
-    },
-  },
-};
-
-/*  APP ROOT  */
+/* ---------------- APP ROOT ---------------- */
 
 function AppRoot() {
   const [ready, setReady] = React.useState(false);
@@ -171,7 +163,7 @@ function AppRoot() {
   );
 }
 
-/* APP  */
+/* ---------------- APP ---------------- */
 
 export default function App() {
   const scheme = useColorScheme();
@@ -181,7 +173,6 @@ export default function App() {
       <SafeAreaProvider>
         <I18nProvider defaultLang="no">
           <NavigationContainer
-            linking={linking}
             theme={scheme === 'dark' ? navDark : navLight}
           >
             <AppRoot />

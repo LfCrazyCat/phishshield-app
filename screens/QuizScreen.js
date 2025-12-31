@@ -2,14 +2,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity, Share } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import questionsNO from '../data/questions.no.json';
 import questionsEN from '../data/questions.en.json';
 import { useThemeColors } from '../constants/theme';
 import { useI18n } from '../i18n/i18n';
 
-// Enkel shuffle-funksjon
+/* ---------------- Utils ---------------- */
+
 function shuffle(array) {
-  const a = array.slice();
+  const a = [...array];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [a[i], a[j]] = [a[j], a[i]];
@@ -17,20 +19,24 @@ function shuffle(array) {
   return a;
 }
 
+/* ---------------- Screen ---------------- */
+
 export default function QuizScreen({ route, navigation }) {
   const { colors, spacing, radius, font, scheme } = useThemeColors();
   const { t, lang } = useI18n();
+
   const category = route?.params?.category ?? 'blandet';
 
-  // Velg spørsmålsbank etter språk
+  /* ---------- Spørsmål ---------- */
+
   const dict = lang === 'en' ? questionsEN : questionsNO;
 
-  // Fallback per kategori – bruker norsk hvis engelsk mangler
+  // fallback: bruk norsk hvis engelsk kategori mangler
   const merged = useMemo(() => {
     const out = { ...dict };
-    for (const key of Object.keys(questionsNO)) {
-      if (!out[key] || !Array.isArray(out[key])) out[key] = questionsNO[key];
-    }
+    Object.keys(questionsNO).forEach(key => {
+      if (!Array.isArray(out[key])) out[key] = questionsNO[key];
+    });
     return out;
   }, [dict]);
 
@@ -41,9 +47,11 @@ export default function QuizScreen({ route, navigation }) {
     return shuffle(merged[category] ?? []);
   }, [merged, category]);
 
-  const realQuestions = questions.filter(q => !q.id.startsWith('intro_'));
-  const introCard = questions.find(q => q.id.startsWith('intro_'));
+  const introCard = questions.find(q => q.id?.startsWith('intro_'));
+  const realQuestions = questions.filter(q => !q.id?.startsWith('intro_'));
   const total = realQuestions.length;
+
+  /* ---------- State ---------- */
 
   const [idx, setIdx] = useState(0);
   const [score, setScore] = useState(0);
@@ -54,6 +62,8 @@ export default function QuizScreen({ route, navigation }) {
   const q = realQuestions[idx];
   const bestKey = `phishshield_best_${category}`;
 
+  /* ---------- Beste score ---------- */
+
   useEffect(() => {
     (async () => {
       const raw = await AsyncStorage.getItem(bestKey);
@@ -61,8 +71,34 @@ export default function QuizScreen({ route, navigation }) {
     })();
   }, [bestKey]);
 
+  useEffect(() => {
+    if (!showResult) return;
+
+    (async () => {
+      const cur = { score, total };
+      const raw = await AsyncStorage.getItem(bestKey);
+
+      if (!raw) {
+        await AsyncStorage.setItem(bestKey, JSON.stringify(cur));
+        setBest(cur);
+        return;
+      }
+
+      const prev = JSON.parse(raw);
+      const prevPct = Math.round((prev.score / prev.total) * 100);
+      const curPct = Math.round((score / total) * 100);
+
+      if (curPct > prevPct) {
+        await AsyncStorage.setItem(bestKey, JSON.stringify(cur));
+        setBest(cur);
+      }
+    })();
+  }, [showResult, score, total, bestKey]);
+
+  /* ---------- Handlers ---------- */
+
   function answer(userThinksPhish) {
-    if (answered || !q) return;
+    if (!q || answered) return;
     if (userThinksPhish === q.isPhish) setScore(s => s + 1);
     setAnswered(true);
   }
@@ -76,30 +112,17 @@ export default function QuizScreen({ route, navigation }) {
     }
   }
 
-  useEffect(() => {
-    if (!showResult) return;
-    (async () => {
-      const cur = { score, total };
-      const raw = await AsyncStorage.getItem(bestKey);
-      if (!raw) {
-        await AsyncStorage.setItem(bestKey, JSON.stringify(cur));
-        setBest(cur);
-        return;
-      }
-      const prev = JSON.parse(raw);
-      const prevPct = Math.round((prev.score / prev.total) * 100);
-      const curPct = Math.round((score / total) * 100);
-      if (curPct > prevPct) {
-        await AsyncStorage.setItem(bestKey, JSON.stringify(cur));
-        setBest(cur);
-      }
-    })();
-  }, [showResult, score, total, bestKey]);
+  function restart() {
+    setIdx(0);
+    setScore(0);
+    setAnswered(false);
+    setShowResult(false);
+  }
 
-  // ✅ FORBEDRET: Deling med oversatt kategorinavn
   async function shareResult() {
     const pct = Math.round((score / total) * 100);
-    const categoryLabel = t(`home.categories.${category}`);
+    const categoryLabel = t(`home.categories.${category}`) ?? category;
+
     const msg = t('quiz.shareMsg', {
       category: categoryLabel,
       score,
@@ -112,51 +135,77 @@ export default function QuizScreen({ route, navigation }) {
     } catch {}
   }
 
-  function restart() {
-    setIdx(0);
-    setScore(0);
-    setAnswered(false);
-    setShowResult(false);
-  }
+  /* UI: ingen spørsmål */
 
-  // ---------- UI ----------
-  if (!q) {
+  if (!q && !showResult) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text>{t('quiz.backHome')}</Text>
+          <Text style={{ color: colors.tint }}>{t('quiz.backHome')}</Text>
         </TouchableOpacity>
       </View>
     );
   }
+
+  /*  UI: resultat  */
 
   if (showResult) {
     const pct = Math.round((score / total) * 100);
+
     return (
-      <View style={{ padding: spacing.lg }}>
-        <Text style={{ fontSize: font.h1 }}>{t('quiz.resultTitle')}</Text>
-        <Text>{score} / {total} ({pct}%)</Text>
+      <View style={{ flex: 1, padding: spacing.lg, gap: spacing.md }}>
+        <Text style={{ fontSize: font.h1, fontWeight: '800', textAlign: 'center' }}>
+          {t('quiz.resultTitle')}
+        </Text>
+
+        <Text style={{ fontSize: 24, textAlign: 'center' }}>
+          {score} / {total} ({pct}%)
+        </Text>
+
+        {best && (
+          <Text style={{ textAlign: 'center', color: colors.text }}>
+            {t('quiz.bestText', {
+              score: best.score,
+              total: best.total,
+              pct: Math.round((best.score / best.total) * 100),
+            })}
+          </Text>
+        )}
 
         <TouchableOpacity onPress={restart}>
-          <Text>{t('quiz.replay')}</Text>
+          <Text style={{ color: colors.tint, textAlign: 'center' }}>
+            {t('quiz.replay')}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={shareResult}>
-          <Text>{t('quiz.share')}</Text>
+          <Text style={{ color: colors.tint, textAlign: 'center' }}>
+            {t('quiz.share')}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          <Text>{t('quiz.backHome')}</Text>
+          <Text style={{ color: colors.tint, textAlign: 'center' }}>
+            {t('quiz.backHome')}
+          </Text>
         </TouchableOpacity>
       </View>
     );
   }
 
+  /* UI: quiz  */
+
   return (
-    <View style={{ padding: spacing.lg }}>
+    <View style={{ flex: 1, padding: spacing.lg, gap: spacing.md }}>
       {introCard && (
-        <View style={{ marginBottom: spacing.md }}>
-          <Text style={{ fontWeight: '700' }}>
+        <View
+          style={{
+            padding: spacing.md,
+            borderRadius: radius.md,
+            backgroundColor: scheme === 'dark' ? '#1E293B' : '#F1F5F9',
+          }}
+        >
+          <Text style={{ fontWeight: '700', marginBottom: 4 }}>
             {scheme === 'dark' ? 'ℹ️' : '🧠'} {introCard.prompt}
           </Text>
           <Text>{introCard.why}</Text>
@@ -164,19 +213,21 @@ export default function QuizScreen({ route, navigation }) {
       )}
 
       <Text>{t('quiz.progress', { i: idx + 1, total })}</Text>
-      <Text>{q.prompt}</Text>
+      <Text style={{ fontSize: font.body, fontWeight: '600' }}>{q.prompt}</Text>
 
       <TouchableOpacity onPress={() => answer(true)}>
-        <Text>{t('quiz.choicePhish')}</Text>
+        <Text style={{ color: colors.warning }}>{t('quiz.choicePhish')}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => answer(false)}>
-        <Text>{t('quiz.choiceSafe')}</Text>
+        <Text style={{ color: colors.success }}>{t('quiz.choiceSafe')}</Text>
       </TouchableOpacity>
 
       {answered && (
         <TouchableOpacity onPress={next}>
-          <Text>{idx + 1 < total ? t('quiz.next') : t('quiz.seeResult')}</Text>
+          <Text style={{ color: colors.tint }}>
+            {idx + 1 < total ? t('quiz.next') : t('quiz.seeResult')}
+          </Text>
         </TouchableOpacity>
       )}
     </View>
