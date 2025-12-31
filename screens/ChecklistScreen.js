@@ -7,7 +7,9 @@ import { useI18n } from '../i18n/i18n';
 export default function ChecklistScreen() {
   const { colors, spacing, font } = useThemeColors();
   const { t } = useI18n();
-  const items = t('checklist.items') || [];
+
+  const rawItems = t('checklist.items');
+  const items = Array.isArray(rawItems) ? rawItems : [];
 
   return (
     <ScrollView

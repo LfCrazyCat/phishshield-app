@@ -1,7 +1,7 @@
 // App.js
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import { Platform, View, TouchableOpacity, Text, useColorScheme } from 'react-native';
+import { View, TouchableOpacity, Text, useColorScheme } from 'react-native';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
@@ -23,23 +23,25 @@ import LearnScreen from './screens/LearnScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import QuizResultScreen from './screens/QuizResultScreen';
 
-
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
 
 /* ---------------- Tabs ---------------- */
 
+
+
 function RootTabs() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
 
   return (
     <Tabs.Navigator
+      key={lang}   // 👈 VIKTIGSTE LINJE
       screenOptions={({ route, navigation }) => {
         const map = {
-          Home:        { icon: 'home-outline', color: '#003399', title: t('tabs.home') },
-          Checklist:   { icon: 'checkmark-done-outline', color: '#009933', title: t('tabs.checklist') },
-          Quiz:        { icon: 'help-circle-outline', color: '#FF6600', title: t('tabs.quiz') },
-          Learn:       { icon: 'book-outline', color: '#6A00FF', title: t('tabs.learn') },
+          Home:      { icon: 'home-outline', color: '#003399', title: t('tabs.home') },
+          Checklist: { icon: 'checkmark-done-outline', color: '#009933', title: t('tabs.checklist') },
+          Quiz:      { icon: 'help-circle-outline', color: '#FF6600', title: t('tabs.quiz') },
+          Learn:     { icon: 'book-outline', color: '#6A00FF', title: t('tabs.learn') },
         };
 
         const cfg = map[route.name];
@@ -50,19 +52,24 @@ function RootTabs() {
           headerTitle: cfg.title,
           headerTitleAlign: 'center',
 
-          headerLeft: route.name !== 'Home'
-            ? () => (
-                <TouchableOpacity
-                  onPress={() => navigation.goBack()}
-                  style={{ marginLeft: 12, flexDirection: 'row', alignItems: 'center' }}
-                >
-                  <Ionicons name="chevron-back" size={22} color="#fff" />
-                  <Text style={{ color: '#fff', marginLeft: 4 }}>
-                    {t('actions.back')}
-                  </Text>
-                </TouchableOpacity>
-              )
-            : undefined,
+          headerLeft:
+            route.name !== 'Home'
+              ? () => (
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.canGoBack()
+                        ? navigation.goBack()
+                        : navigation.navigate('Home')
+                    }
+                    style={{ marginLeft: 12, flexDirection: 'row', alignItems: 'center' }}
+                  >
+                    <Ionicons name="chevron-back" size={22} color="#fff" />
+                    <Text style={{ color: '#fff', marginLeft: 4 }}>
+                      {t('actions.back')}
+                    </Text>
+                  </TouchableOpacity>
+                )
+              : undefined,
 
           headerRight: () => (
             <View style={{ marginRight: 12 }}>
@@ -103,8 +110,11 @@ function AppRoot() {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {firstRun && <Stack.Screen name="Onboarding" component={OnboardingScreen} />}
+      {firstRun && (
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+      )}
       <Stack.Screen name="Main" component={RootTabs} />
+      <Stack.Screen name="QuizResult" component={QuizResultScreen} />
     </Stack.Navigator>
   );
 }

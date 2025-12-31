@@ -1,57 +1,59 @@
-// screens/QuizResultScreen.js
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useThemeColors } from '../constants/theme';
 import { useI18n } from '../i18n/i18n';
 
 export default function QuizResultScreen({ route, navigation }) {
-  const { colors, spacing } = useThemeColors();
+  const { colors, spacing, radius } = useThemeColors();
   const { t } = useI18n();
 
   const { score = 0, total = 0 } = route.params || {};
-  const percent = total ? Math.round((score / total) * 100) : 0;
+  const pct = total ? Math.round((score / total) * 100) : 0;
 
   return (
     <View
       style={{
         flex: 1,
         backgroundColor: colors.background,
-        padding: spacing.lg,
-        justifyContent: 'center',
         alignItems: 'center',
+        justifyContent: 'center',
+        padding: spacing.lg,
       }}
     >
-      <Text style={{ fontSize: 22, fontWeight: '700', color: colors.text }}>
+      <Text style={{ fontSize: 24, fontWeight: '700', marginBottom: spacing.sm }}>
         {t('quiz.resultTitle')}
       </Text>
 
-      <Text
-        style={{
-          fontSize: 18,
-          color: colors.text,
-          marginVertical: spacing.md,
-        }}
-      >
-        {score} / {total} ({percent}%)
+      <Text style={{ fontSize: 18, marginBottom: spacing.lg }}>
+        {score} / {total} ({pct}%)
       </Text>
 
-      <Text
+      {/* SPILL IGJEN */}
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('Main', { screen: 'Quiz' })
+        }
         style={{
-          color: colors.textMuted,
-          textAlign: 'center',
-          marginBottom: spacing.lg,
+          backgroundColor: colors.tint,
+          padding: spacing.md,
+          borderRadius: radius.md,
+          marginBottom: spacing.md,
+          minWidth: 200,
         }}
       >
-        {percent >= 80
-          ? t('quiz.resultGood')
-          : percent >= 50
-          ? t('quiz.resultOk')
-          : t('quiz.resultPoor')}
-      </Text>
+        <Text style={{ color: '#fff', textAlign: 'center', fontWeight: '600' }}>
+          {t('quiz.replay')}
+        </Text>
+      </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Quiz')}>
-        <Text style={{ color: colors.tint, fontSize: 16 }}>
-          {t('quiz.restart')}
+      {/* TIL HJEM */}
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('Main', { screen: 'Home' })
+        }
+      >
+        <Text style={{ color: colors.textMuted }}>
+          {t('quiz.backHome')}
         </Text>
       </TouchableOpacity>
     </View>

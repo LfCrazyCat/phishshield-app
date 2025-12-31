@@ -1,4 +1,3 @@
-// screens/QuizScreen.js
 import React, { useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
@@ -12,12 +11,13 @@ function shuffle(arr) {
 }
 
 export default function QuizScreen({ route, navigation }) {
-  const { colors, spacing } = useThemeColors();
+  const { colors, spacing, radius } = useThemeColors();
   const { t, lang } = useI18n();
 
   const category = route?.params?.category ?? 'blandet';
   const dict = lang === 'en' ? questionsEN : questionsNO;
 
+  // 🔹 Bygg spørsmålsliste
   const questions = useMemo(() => {
     const all =
       category === 'blandet'
@@ -26,34 +26,38 @@ export default function QuizScreen({ route, navigation }) {
     return shuffle(all);
   }, [dict, category]);
 
-  const [i, setI] = useState(0);
-  const [score, setScore] = useState(0);
+  const [index, setIndex] = useState(0);
   const [answered, setAnswered] = useState(false);
-  const [lastCorrect, setLastCorrect] = useState(null);
+  const [isCorrect, setIsCorrect] = useState(null);
+  const [score, setScore] = useState(0);
 
-  const q = questions[i];
-  const isIntro = q?.type === 'intro';
+  const q = questions[index];
 
+  // ✅ RIKTIG intro-detektering
+  const isIntro = q?.isPhish === undefined;
+
+  // 🔚 Ferdig med quiz
   if (!q) {
     navigation.replace('QuizResult', {
       score,
-      total: questions.filter(x => x.isPhish !== undefined).length,
+      total: questions.filter(q => q.isPhish !== undefined).length,
     });
     return null;
   }
 
-  function answer(v) {
+  function answer(value) {
     if (answered) return;
-    const correct = v === q.isPhish;
+
+    const correct = value === q.isPhish;
+    setIsCorrect(correct);
     if (correct) setScore(s => s + 1);
-    setLastCorrect(correct);
     setAnswered(true);
   }
 
   function next() {
     setAnswered(false);
-    setLastCorrect(null);
-    setI(i + 1);
+    setIsCorrect(null);
+    setIndex(i => i + 1);
   }
 
   return (
@@ -64,87 +68,119 @@ export default function QuizScreen({ route, navigation }) {
         padding: spacing.lg,
       }}
     >
-      {/* Spørsmål */}
-      <Text
+      {/* SPØRSMÅLSKORT */}
+      <View
         style={{
-          color: colors.text,
-          fontSize: 18,
-          fontWeight: '700',
+          backgroundColor: colors.card,
+          padding: spacing.lg,
+          borderRadius: radius.lg,
           marginBottom: spacing.lg,
         }}
       >
-        {q.prompt}
-      </Text>
+        <Text
+          style={{
+            color: colors.heading,
+            fontSize: 18,
+            fontWeight: '700',
+          }}
+        >
+          {q.prompt}
+        </Text>
+      </View>
 
       {/* INTRO */}
       {isIntro ? (
         <>
-          <Text
-            style={{
-              color: colors.textMuted,
-              marginBottom: spacing.lg,
-            }}
-          >
-            {q.why}
-          </Text>
+          {q.why && (
+            <Text
+              style={{
+                color: colors.textMuted,
+                marginBottom: spacing.lg,
+              }}
+            >
+              {q.why}
+            </Text>
+          )}
 
           <TouchableOpacity onPress={next}>
-            <Text style={{ color: colors.tint, fontSize: 16 }}>
-              {t('quiz.start')}
+            <Text
+              style={{
+                color: colors.tint,
+                fontSize: 16,
+                fontWeight: '600',
+              }}
+            >
+              ▶ {t('quiz.start')}
             </Text>
           </TouchableOpacity>
         </>
       ) : (
         <>
-          {/* SVAR */}
+          {/* SVAR: PHISH */}
           <TouchableOpacity
+            disabled={answered}
             onPress={() => answer(true)}
-            style={{ marginBottom: spacing.md }}
+            style={{
+              backgroundColor: colors.warning + '22',
+              padding: spacing.md,
+              borderRadius: radius.md,
+              marginBottom: spacing.md,
+              opacity: answered ? 0.6 : 1,
+            }}
           >
-            <Text style={{ color: colors.warning, fontSize: 16 }}>
-              {t('quiz.choicePhish')}
+            <Text style={{ color: colors.warning, fontWeight: '600' }}>
+              🚨 {t('quiz.choicePhish')}
             </Text>
           </TouchableOpacity>
 
+          {/* SVAR: TRYGT */}
           <TouchableOpacity
+            disabled={answered}
             onPress={() => answer(false)}
-            style={{ marginBottom: spacing.lg }}
+            style={{
+              backgroundColor: colors.success + '22',
+              padding: spacing.md,
+              borderRadius: radius.md,
+              marginBottom: spacing.lg,
+              opacity: answered ? 0.6 : 1,
+            }}
           >
-            <Text style={{ color: colors.success, fontSize: 16 }}>
-              {t('quiz.choiceSafe')}
+            <Text style={{ color: colors.success, fontWeight: '600' }}>
+              ✅ {t('quiz.choiceSafe')}
             </Text>
           </TouchableOpacity>
 
           {/* FEEDBACK */}
           {answered && (
-            <>
+            <View
+              style={{
+                backgroundColor: colors.card,
+                padding: spacing.md,
+                borderRadius: radius.md,
+              }}
+            >
               <Text
                 style={{
-                  color: lastCorrect ? colors.success : colors.danger,
+                  color: isCorrect ? colors.success : colors.danger,
+                  fontWeight: '700',
                   marginBottom: spacing.sm,
-                  fontWeight: '600',
                 }}
               >
-                {lastCorrect ? t('quiz.correct') : t('quiz.wrong')}
+                {isCorrect ? t('quiz.correct') : t('quiz.wrong')}
               </Text>
 
               {q.why && (
-                <Text
-                  style={{
-                    color: colors.textMuted,
-                    marginBottom: spacing.lg,
-                  }}
-                >
+                <Text style={{ color: colors.textMuted }}>
                   {q.why}
                 </Text>
               )}
 
-              <TouchableOpacity onPress={next}>
-                <Text style={{ color: colors.tint, fontSize: 16 }}>
+              <TouchableOpacity onPress={next} style={{ marginTop: spacing.md }}>
+                <Text style={{ color: colors.tint }}>
                   {t('quiz.next')}
                 </Text>
               </TouchableOpacity>
-            </>
+            </View>
           )}
         </>
       )}

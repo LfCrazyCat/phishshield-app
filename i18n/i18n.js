@@ -1,27 +1,31 @@
+// i18n.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-/** Oversettelser */
-const translations = {
-  no: {
-    tabs: { home: 'Hjem', checklist: 'Sjekkliste', quiz: 'Quiz', learn: 'Lær mer' },
-    actions: { back: 'Tilbake', backToHome: 'Tilbake til Hjem' },
+/* =========================================================
+   TRANSLATIONS
+========================================================= */
 
-    /** ONBOARDING */
+const translations = {
+  /* ===================== NORWEGIAN ===================== */
+  no: {
+    tabs: {
+      home: 'Hjem',
+      checklist: 'Sjekkliste',
+      quiz: 'Quiz',
+      learn: 'Lær mer',
+    },
+
+    actions: {
+      back: 'Tilbake',
+      backToHome: 'Tilbake til Hjem',
+    },
+
     onboarding: {
       slides: [
-        {
-          title: 'Velkommen 👋',
-          body: 'Lær å avsløre phishing med quiz, sjekklister og praktiske tips.',
-        },
-        {
-          title: 'Sjekk lenker 🔗',
-          body: 'Hold over lenker og kontroller toppdomenet før du klikker.',
-        },
-        {
-          title: 'Bruk 2FA 🔐',
-          body: 'Aktiver tofaktor og bruk passordmanager for bedre sikkerhet.',
-        },
+        { title: 'Velkommen 👋', body: 'Lær å avsløre phishing med quiz, sjekklister og praktiske tips.' },
+        { title: 'Sjekk lenker 🔗', body: 'Hold over lenker og kontroller toppdomenet før du klikker.' },
+        { title: 'Bruk 2FA 🔐', body: 'Aktiver tofaktor og bruk passordmanager for bedre sikkerhet.' },
       ],
       next: 'Neste',
       start: 'Kom i gang',
@@ -40,7 +44,7 @@ const translations = {
         lenker: 'Lenker',
         okonomi: 'Økonomi',
         kjarlighet: 'Kjærlighet',
-        passord2fa: 'Passord/2FA',
+        passord2fa: 'Passord / 2FA',
       },
     },
 
@@ -48,107 +52,185 @@ const translations = {
       title: 'Før du klikker… ✅',
       items: [
         'Sjekk avsender: domene, e-post og telefonnummer',
-        'Hold over/forhåndsvis lenken: er toppdomenet ekte?',
-        'Ikke la deg stresse: tidsfrister og trusler = rødt flagg',
-        'Skriv aldri inn passord via en lenke du fikk',
-        'Bruk 2FA og egne bokmerker til pålogging',
-        'Se etter stavefeil, dårlig språk og generiske hilsener',
-        'Ikke åpne mistenkelige vedlegg (.zip/.exe/.html)',
-        'Bekreft via offisielle kanaler (ring, app, nettbank)',
-        'Rapportér mistenkelig e-post til IT eller leverandør',
-        'Bytt passord og sjekk enhetslogg ved mistanke',
+        'Hold over lenken: er toppdomenet ekte?',
+        'Ikke la deg stresse av tidsfrister og trusler',
+        'Skriv aldri inn passord via en lenke',
+        'Bruk 2FA og egne bokmerker',
+        'Se etter stavefeil og generiske hilsener',
+        'Ikke åpne mistenkelige vedlegg',
+        'Bekreft via offisielle kanaler',
+        'Rapportér mistenkelige meldinger',
+        'Bytt passord ved mistanke',
       ],
-      tip: 'Tips: Bruk en passordmanager og unike passord – så tåler du at ett passord lekker.',
+      tip: 'Tips: Bruk passordmanager og unike passord.',
     },
 
     quiz: {
-      progress: 'Spørsmål {i} av {total}',
+      start: 'Start quizen',
       choicePhish: 'Dette er PHISH',
       choiceSafe: 'Dette ser TRYGT ut',
-      feedbackPhish: 'Phish oppdaget 🧪',
-      feedbackSafe: 'Ser trygt ut ✅',
+      correct: 'Riktig!',
+      wrong: 'Feil',
       next: 'Neste',
-      seeResult: 'Se resultat',
       resultTitle: 'Ferdig! 🎉',
       replay: 'Spill igjen',
-      share: 'Del resultat',
       backHome: 'Til Hjem',
-      explainer: 'Tips: Sjekk avsender, sjekk lenker, bruk 2FA.',
-      bestNone: 'Ingen beste score ennå',
-      bestText: 'Beste: {score}/{total} ({pct}%)',
-      shareMsg:
-        'Kategori: {category}\nResultat: {score}/{total} ({pct}%) i PhishShield 🛡️\nTest deg selv – lær å avsløre phishing!',
     },
 
     learn: {
       title: 'Lær mer 🔎',
+
       featuresTitle: 'Kjennetegn på phishing',
       features: [
         'Uvanlig avsender eller domene',
         'Hastverk, trusler eller «for godt til å være sant»',
         'Lenker som etterligner kjente tjenester',
-        'Filer som ber om makroer eller pålogging',
+        'Filer som ber om innlogging eller makroer',
       ],
-      verifyTitle: 'Slik verifiserer du',
+
+      verifyTitle: 'Slik verifiserer du meldinger',
       verify: [
-        'Gå selv til tjenesten via bokmerke eller app',
-        'Sammenlign domenet nøye (vipps.no vs vipps-no-login.com)',
-        'Ring offisielt nummer, ikke nummeret i meldingen',
+        'Gå selv til nettsiden via bokmerke eller app',
+        'Kontroller domenet nøye',
+        'Ring offisielle nummer – ikke de i meldingen',
       ],
-      habitsTitle: 'Sikre vaner',
+
+      habitsTitle: 'Gode sikkerhetsvaner',
       habits: [
-        'Unike passord + passordmanager',
-        'Aktiver 2FA overalt',
-        'Oppdater enheter og apper',
-        'Rapportér mistenkelig aktivitet tidlig',
+        'Unike passord for hver tjeneste',
+        'Bruk passordmanager',
+        'Aktiver tofaktorautentisering',
+        'Hold enheter og apper oppdatert',
       ],
+
+      sourcesTitle: 'Pålitelige kilder',
+      sources: [
+        'Nasjonal sikkerhetsmyndighet (NSM)',
+        'NorCERT',
+        'Politiet',
+        'Banker og offentlige etater',
+      ],
+
+      aboutTitle: 'Om PhishShield',
+      aboutText:
+        'PhishShield hjelper deg å gjenkjenne og unngå phishing og digital svindel.',
+
+      contactTitle: 'Kontakt',
+      emailLabel: 'E-post',
+
+      privacyTitle: 'Personvern',
     },
   },
 
+  /* ===================== ENGLISH ===================== */
   en: {
-    tabs: { home: 'Home', checklist: 'Checklist', quiz: 'Quiz', learn: 'Learn More' },
-    actions: { back: 'Back', backToHome: 'Back to Home' },
+    tabs: {
+      home: 'Home',
+      checklist: 'Checklist',
+      quiz: 'Quiz',
+      learn: 'Learn More',
+    },
 
-    /** ONBOARDING */
-    onboarding: {
-      slides: [
-        {
-          title: 'Welcome 👋',
-          body: 'Learn how to spot phishing using quizzes, checklists, and tips.',
-        },
-        {
-          title: 'Check links 🔗',
-          body: 'Hover over links and verify the top-level domain before clicking.',
-        },
-        {
-          title: 'Use 2FA 🔐',
-          body: 'Enable two-factor authentication and use a password manager.',
-        },
-      ],
-      next: 'Next',
-      start: 'Get started',
+    actions: {
+      back: 'Back',
+      backToHome: 'Back to Home',
     },
 
     home: {
       title: 'Welcome to PhishShield 🔒',
-      subtitle: 'Pick a category and test yourself.',
+      subtitle: 'Choose a category and test yourself.',
       startQuiz: 'Start quiz',
       checklist: 'Checklist',
-      tip: 'Tips: 1) Check sender 2) Check links 3) Use 2FA.',
-      best: 'Best in “{label}”: {score}/{total} ({pct}%)',
+      tip: 'Tip: 1) Check sender 2) Inspect links 3) Use 2FA.',
       categories: {
         blandet: 'Mixed',
         avsender: 'Sender',
         lenker: 'Links',
-        okonomi: 'Finance',
+        okonomi: 'Economy',
         kjarlighet: 'Romance',
-        passord2fa: 'Passwords/2FA',
+        passord2fa: 'Passwords / 2FA',
       },
+    },
+
+    checklist: {
+      title: 'Before you click… ✅',
+      items: [
+        'Check the sender: domain, email and phone number',
+        'Hover over links: is the top-level domain legitimate?',
+        'Do not rush: urgency and threats are red flags',
+        'Never enter passwords through a received link',
+        'Use 2FA and your own bookmarks',
+        'Look for spelling errors and generic greetings',
+        'Do not open suspicious attachments',
+        'Verify via official channels',
+        'Report suspicious messages',
+        'Change passwords if in doubt',
+      ],
+      tip: 'Tip: Use a password manager and unique passwords.',
+    },
+
+    quiz: {
+      start: 'Start quiz',
+      choicePhish: 'This is PHISH',
+      choiceSafe: 'This looks SAFE',
+      correct: 'Correct!',
+      wrong: 'Incorrect',
+      next: 'Next',
+      resultTitle: 'Finished! 🎉',
+      replay: 'Play again',
+      backHome: 'Back to Home',
+    },
+
+    learn: {
+      title: 'Learn more 🔎',
+
+      featuresTitle: 'Signs of phishing',
+      features: [
+        'Unusual sender or domain',
+        'Urgency or threats',
+        'Links imitating known services',
+        'Files requesting login or macros',
+      ],
+
+      verifyTitle: 'How to verify messages',
+      verify: [
+        'Visit websites via bookmarks or official apps',
+        'Carefully inspect the domain',
+        'Call official numbers – not those in the message',
+      ],
+
+      habitsTitle: 'Good security habits',
+      habits: [
+        'Use unique passwords',
+        'Use a password manager',
+        'Enable two-factor authentication',
+        'Keep devices and apps updated',
+      ],
+
+      sourcesTitle: 'Trusted sources',
+      sources: [
+        'National Cyber Security Centre',
+        'CERT',
+        'Police',
+        'Banks and government agencies',
+      ],
+
+      aboutTitle: 'About PhishShield',
+      aboutText:
+        'PhishShield helps you recognize and avoid phishing and online scams.',
+
+      contactTitle: 'Contact',
+      emailLabel: 'Email',
+
+      privacyTitle: 'Privacy',
     },
   },
 };
 
-/** Context */
+/* =========================================================
+   CONTEXT
+========================================================= */
+
 const I18nContext = createContext();
 
 export const I18nProvider = ({ children, defaultLang = 'no' }) => {
@@ -174,6 +256,7 @@ export const I18nProvider = ({ children, defaultLang = 'no' }) => {
         value = value.replaceAll(`{${k}}`, String(v));
       });
     }
+
     return value ?? key;
   };
 
