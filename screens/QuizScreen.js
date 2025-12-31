@@ -1,7 +1,6 @@
 // screens/QuizScreen.js
-import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, Share } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useMemo, useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 
 import questionsNO from '../data/questions.no.json';
 import questionsEN from '../data/questions.en.json';
@@ -20,9 +19,10 @@ export default function QuizScreen({ route, navigation }) {
   const dict = lang === 'en' ? questionsEN : questionsNO;
 
   const questions = useMemo(() => {
-    const all = category === 'blandet'
-      ? Object.values(dict).flat()
-      : dict[category] ?? [];
+    const all =
+      category === 'blandet'
+        ? Object.values(dict).flat()
+        : dict[category] ?? [];
     return shuffle(all);
   }, [dict, category]);
 
@@ -34,9 +34,18 @@ export default function QuizScreen({ route, navigation }) {
 
   if (!q) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: colors.background,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={{ color: colors.tint }}>{t('quiz.backHome')}</Text>
+          <Text style={{ color: colors.tint, fontSize: 18 }}>
+            {t('quiz.backHome')}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -49,23 +58,55 @@ export default function QuizScreen({ route, navigation }) {
   }
 
   return (
-    <View style={{ flex: 1, padding: spacing.lg, gap: spacing.md }}>
-      <Text style={{ fontWeight: '700' }}>{q.prompt}</Text>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: colors.background,
+        padding: spacing.lg,
+      }}
+    >
+      {/* Spørsmål */}
+      <Text
+        style={{
+          color: colors.text,
+          fontSize: 18,
+          fontWeight: '700',
+          marginBottom: spacing.lg,
+        }}
+      >
+        {q.prompt}
+      </Text>
 
-      <TouchableOpacity onPress={() => answer(true)}>
-        <Text style={{ color: colors.warning }}>{t('quiz.choicePhish')}</Text>
+      {/* Valg */}
+      <TouchableOpacity
+        onPress={() => answer(true)}
+        style={{ marginBottom: spacing.md }}
+      >
+        <Text style={{ color: colors.warning, fontSize: 16 }}>
+          {t('quiz.choicePhish')}
+        </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => answer(false)}>
-        <Text style={{ color: colors.success }}>{t('quiz.choiceSafe')}</Text>
+      <TouchableOpacity
+        onPress={() => answer(false)}
+        style={{ marginBottom: spacing.lg }}
+      >
+        <Text style={{ color: colors.success, fontSize: 16 }}>
+          {t('quiz.choiceSafe')}
+        </Text>
       </TouchableOpacity>
 
+      {/* Neste */}
       {answered && (
-        <TouchableOpacity onPress={() => {
-          setAnswered(false);
-          setI(i + 1);
-        }}>
-          <Text style={{ color: colors.tint }}>{t('quiz.next')}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setAnswered(false);
+            setI(i + 1);
+          }}
+        >
+          <Text style={{ color: colors.tint, fontSize: 16 }}>
+            {t('quiz.next')}
+          </Text>
         </TouchableOpacity>
       )}
     </View>
