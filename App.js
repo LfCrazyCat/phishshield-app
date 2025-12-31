@@ -1,18 +1,13 @@
 // App.js
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import {
-  View,
-  TouchableOpacity,
-  Text,
-  Platform,
-  useColorScheme,
-} from 'react-native';
+import { Platform, View, TouchableOpacity, Text, useColorScheme } from 'react-native';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -30,7 +25,7 @@ import OnboardingScreen from './screens/OnboardingScreen';
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
 
-/* ---------------- ROOT TABS ---------------- */
+/* ---------------- Tabs ---------------- */
 
 function RootTabs() {
   const { t } = useI18n();
@@ -38,106 +33,57 @@ function RootTabs() {
   return (
     <Tabs.Navigator
       screenOptions={({ route, navigation }) => {
-        let iconName = 'home-outline';
-        let headerIcon = 'shield-checkmark-outline';
-        let headerColor = '#003399';
-        let activeColor = '#003399';
-        let title = t('tabs.home');
+        const map = {
+          Home:        { icon: 'home-outline', color: '#003399', title: t('tabs.home') },
+          Checklist:   { icon: 'checkmark-done-outline', color: '#009933', title: t('tabs.checklist') },
+          Quiz:        { icon: 'help-circle-outline', color: '#FF6600', title: t('tabs.quiz') },
+          Learn:       { icon: 'book-outline', color: '#6A00FF', title: t('tabs.learn') },
+        };
 
-        if (route.name === 'Checklist') {
-          iconName = 'checkmark-done-outline';
-          headerIcon = 'list-outline';
-          headerColor = '#009933';
-          activeColor = '#009933';
-          title = t('tabs.checklist');
-        }
-
-        if (route.name === 'Quiz') {
-          iconName = 'help-circle-outline';
-          headerIcon = 'help-buoy-outline';
-          headerColor = '#FF6600';
-          activeColor = '#FF6600';
-          title = t('tabs.quiz');
-        }
-
-        if (route.name === 'Learn') {
-          iconName = 'book-outline';
-          headerIcon = 'book-outline';
-          headerColor = '#6A00FF';
-          activeColor = '#6A00FF';
-          title = t('tabs.learn');
-        }
+        const cfg = map[route.name];
 
         return {
-          headerStyle: { backgroundColor: headerColor },
+          headerStyle: { backgroundColor: cfg.color },
           headerTintColor: '#fff',
+          headerTitle: cfg.title,
           headerTitleAlign: 'center',
-          headerTitleStyle: { fontWeight: '700' },
-          headerTitle: title,
 
-          headerLeft: () => (
-            <View style={{ marginLeft: 10 }}>
-              <Ionicons name={headerIcon} size={24} color="#fff" />
-            </View>
-          ),
+          headerLeft: route.name !== 'Home'
+            ? () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{ marginLeft: 12, flexDirection: 'row', alignItems: 'center' }}
+                >
+                  <Ionicons name="chevron-back" size={22} color="#fff" />
+                  <Text style={{ color: '#fff', marginLeft: 4 }}>
+                    {t('actions.back')}
+                  </Text>
+                </TouchableOpacity>
+              )
+            : undefined,
 
           headerRight: () => (
-            <View style={{ marginRight: 10 }}>
+            <View style={{ marginRight: 12 }}>
               <LanguageSwitch compact />
             </View>
           ),
 
-          tabBarActiveTintColor: activeColor,
-          tabBarInactiveTintColor: '#7a7a7a',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name={iconName} size={size} color={color} />
+            <Ionicons name={cfg.icon} size={size} color={color} />
           ),
-          tabBarLabel: title,
-          tabBarStyle: Platform.select({
-            android: { paddingBottom: 4, height: 58 },
-            web: { height: 60 },
-            default: {},
-          }),
+          tabBarActiveTintColor: cfg.color,
         };
       }}
     >
       <Tabs.Screen name="Home" component={HomeScreen} />
       <Tabs.Screen name="Checklist" component={ChecklistScreen} />
-
-      <Tabs.Screen
-        name="Quiz"
-        component={QuizScreen}
-        options={({ navigation }) => ({
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Home')}
-              style={{
-                marginLeft: 10,
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}
-            >
-              <Ionicons name="chevron-back" size={24} color="#fff" />
-              <Text
-                style={{
-                  color: '#fff',
-                  fontWeight: '600',
-                  marginLeft: 4,
-                }}
-              >
-                {t('actions.back')}
-              </Text>
-            </TouchableOpacity>
-          ),
-        })}
-      />
-
+      <Tabs.Screen name="Quiz" component={QuizScreen} />
       <Tabs.Screen name="Learn" component={LearnScreen} />
     </Tabs.Navigator>
   );
 }
 
-/* ---------------- APP ROOT ---------------- */
+/* ---------------- Root ---------------- */
 
 function AppRoot() {
   const [ready, setReady] = React.useState(false);
@@ -145,8 +91,8 @@ function AppRoot() {
 
   React.useEffect(() => {
     (async () => {
-      const onboarded = await AsyncStorage.getItem('phishshield_onboarded');
-      setFirstRun(!onboarded);
+      const done = await AsyncStorage.getItem('phishshield_onboarded');
+      setFirstRun(!done);
       setReady(true);
     })();
   }, []);
@@ -155,15 +101,13 @@ function AppRoot() {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {firstRun && (
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-      )}
-      <Stack.Screen name="Root" component={RootTabs} />
+      {firstRun && <Stack.Screen name="Onboarding" component={OnboardingScreen} />}
+      <Stack.Screen name="Main" component={RootTabs} />
     </Stack.Navigator>
   );
 }
 
-/* ---------------- APP ---------------- */
+/* ---------------- App ---------------- */
 
 export default function App() {
   const scheme = useColorScheme();
@@ -172,9 +116,7 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <I18nProvider defaultLang="no">
-          <NavigationContainer
-            theme={scheme === 'dark' ? navDark : navLight}
-          >
+          <NavigationContainer theme={scheme === 'dark' ? navDark : navLight}>
             <AppRoot />
           </NavigationContainer>
         </I18nProvider>

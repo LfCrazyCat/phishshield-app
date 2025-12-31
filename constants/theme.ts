@@ -10,7 +10,7 @@ const BRAND = {
   danger:  '#CC0000',
 };
 
-/** Lyse/mørke paletter */
+/** Lyse/morke paletter */
 export const Colors = {
   light: {
     text: '#11181C',
