@@ -12,7 +12,7 @@ function shuffle(arr) {
 }
 
 export default function QuizScreen({ route, navigation }) {
-  const { colors, spacing, radius, font } = useThemeColors();
+  const { colors, spacing } = useThemeColors();
   const { t, lang } = useI18n();
 
   const category = route?.params?.category ?? 'blandet';
@@ -29,32 +29,31 @@ export default function QuizScreen({ route, navigation }) {
   const [i, setI] = useState(0);
   const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(false);
+  const [lastCorrect, setLastCorrect] = useState(null);
 
   const q = questions[i];
+  const isIntro = q?.type === 'intro';
 
   if (!q) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: colors.background,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={{ color: colors.tint, fontSize: 18 }}>
-            {t('quiz.backHome')}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
+    navigation.replace('QuizResult', {
+      score,
+      total: questions.filter(x => x.isPhish !== undefined).length,
+    });
+    return null;
   }
 
   function answer(v) {
     if (answered) return;
-    if (v === q.isPhish) setScore(s => s + 1);
+    const correct = v === q.isPhish;
+    if (correct) setScore(s => s + 1);
+    setLastCorrect(correct);
     setAnswered(true);
+  }
+
+  function next() {
+    setAnswered(false);
+    setLastCorrect(null);
+    setI(i + 1);
   }
 
   return (
@@ -77,37 +76,77 @@ export default function QuizScreen({ route, navigation }) {
         {q.prompt}
       </Text>
 
-      {/* Valg */}
-      <TouchableOpacity
-        onPress={() => answer(true)}
-        style={{ marginBottom: spacing.md }}
-      >
-        <Text style={{ color: colors.warning, fontSize: 16 }}>
-          {t('quiz.choicePhish')}
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => answer(false)}
-        style={{ marginBottom: spacing.lg }}
-      >
-        <Text style={{ color: colors.success, fontSize: 16 }}>
-          {t('quiz.choiceSafe')}
-        </Text>
-      </TouchableOpacity>
-
-      {/* Neste */}
-      {answered && (
-        <TouchableOpacity
-          onPress={() => {
-            setAnswered(false);
-            setI(i + 1);
-          }}
-        >
-          <Text style={{ color: colors.tint, fontSize: 16 }}>
-            {t('quiz.next')}
+      {/* INTRO */}
+      {isIntro ? (
+        <>
+          <Text
+            style={{
+              color: colors.textMuted,
+              marginBottom: spacing.lg,
+            }}
+          >
+            {q.why}
           </Text>
-        </TouchableOpacity>
+
+          <TouchableOpacity onPress={next}>
+            <Text style={{ color: colors.tint, fontSize: 16 }}>
+              {t('quiz.start')}
+            </Text>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <>
+          {/* SVAR */}
+          <TouchableOpacity
+            onPress={() => answer(true)}
+            style={{ marginBottom: spacing.md }}
+          >
+            <Text style={{ color: colors.warning, fontSize: 16 }}>
+              {t('quiz.choicePhish')}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => answer(false)}
+            style={{ marginBottom: spacing.lg }}
+          >
+            <Text style={{ color: colors.success, fontSize: 16 }}>
+              {t('quiz.choiceSafe')}
+            </Text>
+          </TouchableOpacity>
+
+          {/* FEEDBACK */}
+          {answered && (
+            <>
+              <Text
+                style={{
+                  color: lastCorrect ? colors.success : colors.danger,
+                  marginBottom: spacing.sm,
+                  fontWeight: '600',
+                }}
+              >
+                {lastCorrect ? t('quiz.correct') : t('quiz.wrong')}
+              </Text>
+
+              {q.why && (
+                <Text
+                  style={{
+                    color: colors.textMuted,
+                    marginBottom: spacing.lg,
+                  }}
+                >
+                  {q.why}
+                </Text>
+              )}
+
+              <TouchableOpacity onPress={next}>
+                <Text style={{ color: colors.tint, fontSize: 16 }}>
+                  {t('quiz.next')}
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </>
       )}
     </View>
   );

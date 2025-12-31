@@ -21,6 +21,8 @@ import ChecklistScreen from './screens/ChecklistScreen';
 import QuizScreen from './screens/QuizScreen';
 import LearnScreen from './screens/LearnScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
+import QuizResultScreen from './screens/QuizResultScreen';
+
 
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
