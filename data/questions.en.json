@@ -3,7 +3,7 @@
   "avsender": [
     {
       "id": "intro_avsender",
-      "prompt": "✉️ Sender — learn to recognize fake emails and messages.",
+      "prompt": "Sender — learn to recognize fake emails and messages.",
       "why": "Always verify the sender address and domain before clicking or responding."
     },
     { "id": "avs_1", "prompt": "SMS from the “Tax Authority” about tax money – unknown number.", "isPhish": true, "why": "Authorities rarely send links from random numbers." },
@@ -21,7 +21,7 @@
   "lenker": [
     {
       "id": "intro_lenker",
-      "prompt": "🔗 Links — learn to identify fake URLs and deceptive domains.",
+      "prompt": " Links — learn to identify fake URLs and deceptive domains.",
       "why": "Always inspect links carefully before clicking."
     },
     { "id": "lnk_1", "prompt": "Link to http://vipps-no-login.secureupdate.com", "isPhish": true, "why": "Wrong top-level domain." },
@@ -39,7 +39,7 @@
   "okonomi": [
     {
       "id": "intro_okonomi",
-      "prompt": "💰 Economy — fake payments and financial scams.",
+      "prompt": "Economy — fake payments and financial scams.",
       "why": "Be cautious of unexpected payment requests."
     },
     { "id": "eco_1", "prompt": "You won 1 million – pay a fee to receive it.", "isPhish": true, "why": "Advance-fee scam." },
@@ -57,7 +57,7 @@
   "kjarlighet": [
     {
       "id": "intro_kjarlighet",
-      "prompt": "💞 Romance scams — emotional manipulation.",
+      "prompt": "Romance scams — emotional manipulation.",
       "why": "Scammers build trust before asking for money."
     },
     { "id": "lov_1", "prompt": "Online partner asks for emergency money.", "isPhish": true, "why": "Romance scam." },
@@ -70,7 +70,7 @@
   "passord2fa": [
     {
       "id": "intro_passord2fa",
-      "prompt": "🔐 Passwords and two-factor authentication.",
+      "prompt": "Passwords and two-factor authentication.",
       "why": "Never share passwords or authentication codes."
     },
     { "id": "pwd_1", "prompt": "Email asks you to send your password.", "isPhish": true, "why": "Passwords are never requested." },
