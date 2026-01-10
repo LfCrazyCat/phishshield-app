@@ -3,7 +3,7 @@
   "avsender": [
     {
       "id": "intro_avsender",
-      "prompt": "✉️ Avsender — lær å gjenkjenne falske e-poster og meldinger.",
+      "prompt": "Avsender — lær å gjenkjenne falske e-poster og meldinger.",
       "why": "Sjekk alltid avsenderadresse og domene nøye før du klikker eller svarer."
     },
     { "id": "avs_1", "prompt": "SMS fra «Skatteetaten» om skattepenger fra ukjent mobilnummer.", "isPhish": true, "why": "Offentlige etater sender sjelden lenker fra tilfeldige numre." },
@@ -21,7 +21,7 @@
   "lenker": [
     {
       "id": "intro_lenker",
-      "prompt": "🔗 Lenker — lær å avsløre falske URL-adresser.",
+      "prompt": "Lenker — lær å avsløre falske URL-adresser.",
       "why": "Se alltid nøye på lenken før du klikker."
     },
     { "id": "lnk_1", "prompt": "http://vipps-no-login.secureupdate.com", "isPhish": true, "why": "Feil toppdomene." },
@@ -39,7 +39,7 @@
   "okonomi": [
     {
       "id": "intro_okonomi",
-      "prompt": "💰 Økonomi — falske betalinger og pengekrav.",
+      "prompt": "Økonomi — falske betalinger og pengekrav.",
       "why": "Vær skeptisk til uventede krav."
     },
     { "id": "eco_1", "prompt": "Du har vunnet 1 million – betal gebyr.", "isPhish": true, "why": "Klassisk svindel." },
@@ -57,7 +57,7 @@
   "kjarlighet": [
     {
       "id": "intro_kjarlighet",
-      "prompt": "💞 Kjærlighetssvindel.",
+      "prompt": "Kjærlighetssvindel.",
       "why": "Svindlere bygger tillit før de ber om penger."
     },
     { "id": "lov_1", "prompt": "Nettkjæreste ber om penger.", "isPhish": true, "why": "Romance scam." },
@@ -75,7 +75,7 @@
   "passord2fa": [
     {
       "id": "intro_passord2fa",
-      "prompt": "🔐 Passord og tofaktor.",
+      "prompt": "Passord og tofaktor.",
       "why": "Del aldri koder."
     },
     { "id": "pwd_1", "prompt": "Send meg passordet ditt.", "isPhish": true, "why": "Aldri del passord." },
