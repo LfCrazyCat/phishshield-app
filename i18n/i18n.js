@@ -23,16 +23,16 @@ const translations = {
 
     onboarding: {
       slides: [
-        { title: 'Velkommen 👋', body: 'Lær å avsløre phishing med quiz, sjekklister og praktiske tips.' },
-        { title: 'Sjekk lenker 🔗', body: 'Hold over lenker og kontroller toppdomenet før du klikker.' },
-        { title: 'Bruk 2FA 🔐', body: 'Aktiver tofaktor og bruk passordmanager for bedre sikkerhet.' },
+        { title: 'Velkommen!!', body: 'Lær å avsløre phishing med quiz, sjekklister og praktiske tips.' },
+        { title: 'Sjekk lenker', body: 'Hold over lenker og kontroller toppdomenet før du klikker.' },
+        { title: 'Bruk 2FA', body: 'Aktiver tofaktor og bruk passordmanager for bedre sikkerhet.' },
       ],
       next: 'Neste',
       start: 'Kom i gang',
     },
 
     home: {
-      title: 'Velkommen til PhishShield 🔒',
+      title: 'Velkommen til PhishShield',
       subtitle: 'Velg kategori og test deg selv.',
       startQuiz: 'Start quiz',
       checklist: 'Sjekkliste',
@@ -49,7 +49,7 @@ const translations = {
     },
 
     checklist: {
-      title: 'Før du klikker… ✅',
+      title: 'Før du klikker…',
       items: [
         'Sjekk avsender: domene, e-post og telefonnummer',
         'Hold over lenken: er toppdomenet ekte?',
@@ -72,13 +72,13 @@ const translations = {
       correct: 'Riktig!',
       wrong: 'Feil',
       next: 'Neste',
-      resultTitle: 'Ferdig! 🎉',
+      resultTitle: 'Ferdig!',
       replay: 'Spill igjen',
       backHome: 'Til Hjem',
     },
 
     learn: {
-      title: 'Lær mer 🔎',
+      title: 'Lær mer',
 
       featuresTitle: 'Kjennetegn på phishing',
       features: [
@@ -137,7 +137,7 @@ const translations = {
     },
 
     home: {
-      title: 'Welcome to PhishShield 🔒',
+      title: 'Welcome to PhishShield',
       subtitle: 'Choose a category and test yourself.',
       startQuiz: 'Start quiz',
       checklist: 'Checklist',
@@ -153,7 +153,7 @@ const translations = {
     },
 
     checklist: {
-      title: 'Before you click… ✅',
+      title: 'Before you click…',
       items: [
         'Check the sender: domain, email and phone number',
         'Hover over links: is the top-level domain legitimate?',
@@ -176,13 +176,13 @@ const translations = {
       correct: 'Correct!',
       wrong: 'Incorrect',
       next: 'Next',
-      resultTitle: 'Finished! 🎉',
+      resultTitle: 'Finished!',
       replay: 'Play again',
       backHome: 'Back to Home',
     },
 
     learn: {
-      title: 'Learn more 🔎',
+      title: 'Learn more',
 
       featuresTitle: 'Signs of phishing',
       features: [
