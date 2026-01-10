@@ -35,7 +35,7 @@ ${JSON.stringify(noData, null, 2)}
 
 (async () => {
   try {
-    // sender forespørsel til LM Studio
+    // sender forespørsel til LLM
     const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -62,12 +62,12 @@ ${JSON.stringify(noData, null, 2)}
       return;
     }
 
-    // Lagre den oversatte filen
+    // lagre den oversattete filen
     fs.writeFileSync(outputFile, translated, "utf8");
     console.log("✅ Oversettelse fullført!");
     console.log(`💾 Fil lagret til: ${outputFile}`);
 
-    // --- Validering av strukturen ---
+    // --- validering av struktur ---
     console.log("\n🔍 Sjekker at antall spørsmål stemmer...");
 
     const enData = JSON.parse(fs.readFileSync(outputFile, "utf8"));
@@ -87,10 +87,10 @@ ${JSON.stringify(noData, null, 2)}
       console.log("\n⚠️ Uoverensstemmelser funnet:");
       errors.forEach(e => console.log(e));
     } else {
-      console.log("\n🎉 Alle kategorier stemmer perfekt!");
+      console.log("\n Hurra! Alle kategorier stemmer perfekt!");
     }
 
   } catch (err) {
-    console.error("🚫 Feil ved oversettelse:", err.message);
+    console.error(" Feil ved oversettelse:", err.message);
   }
 })();
