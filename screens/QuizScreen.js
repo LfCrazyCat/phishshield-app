@@ -17,7 +17,7 @@ export default function QuizScreen({ route, navigation }) {
   const category = route?.params?.category ?? 'blandet';
   const dict = lang === 'en' ? questionsEN : questionsNO;
 
-  // 🔹 Bygg spørsmålsliste
+  //  Bygging av spørsmålsliste
   const questions = useMemo(() => {
     const all =
       category === 'blandet'
@@ -33,10 +33,10 @@ export default function QuizScreen({ route, navigation }) {
 
   const q = questions[index];
 
-  // ✅ RIKTIG intro-detektering
+  //  intro-detektering
   const isIntro = q?.isPhish === undefined;
 
-  // 🔚 Ferdig med quiz
+  // finito med quiz
   if (!q) {
     navigation.replace('QuizResult', {
       score,
@@ -68,7 +68,7 @@ export default function QuizScreen({ route, navigation }) {
         padding: spacing.lg,
       }}
     >
-      {/* SPØRSMÅLSKORT */}
+      {/* questions kort*/}
       <View
         style={{
           backgroundColor: colors.card,
@@ -116,7 +116,7 @@ export default function QuizScreen({ route, navigation }) {
         </>
       ) : (
         <>
-          {/* SVAR: PHISH */}
+          {/* hva som er PHISH */}
           <TouchableOpacity
             disabled={answered}
             onPress={() => answer(true)}
@@ -133,7 +133,7 @@ export default function QuizScreen({ route, navigation }) {
             </Text>
           </TouchableOpacity>
 
-          {/* SVAR: TRYGT */}
+          {/* hva som er TRYGT */}
           <TouchableOpacity
             disabled={answered}
             onPress={() => answer(false)}
@@ -150,7 +150,7 @@ export default function QuizScreen({ route, navigation }) {
             </Text>
           </TouchableOpacity>
 
-          {/* FEEDBACK */}
+          {/* FEEDBACK/TILBAKEMELD */}
           {answered && (
             <View
               style={{
