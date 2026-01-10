@@ -47,7 +47,7 @@ export default function LearnScreen() {
   const emailLabel = t('learn.emailLabel');
 
   const privacyTitle = t('learn.privacyTitle');
-  const p = t('learn.privacy') || {}; // alle undertekster i et objekt
+  const p = t('learn.privacy') || {}; // undertekster i et objekt
   const improve = Array.isArray(p.improve) ? p.improve : [];
 
   return (
