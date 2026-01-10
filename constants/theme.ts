@@ -2,7 +2,7 @@
 import { Platform, useColorScheme } from 'react-native';
 import { DefaultTheme, DarkTheme, type Theme } from '@react-navigation/native';
 
-/** Brand-farger */
+/** brand-farge */
 const BRAND = {
   primary: '#003399', // PhishShield blå
   success: '#00CC66',
@@ -10,7 +10,7 @@ const BRAND = {
   danger:  '#CC0000',
 };
 
-/** Lyse/morke paletter */
+/** lyse-morke paletter */
 export const Colors = {
   light: {
     text: '#11181C',
@@ -36,7 +36,7 @@ export const Colors = {
     background: '#0C0D0E',
     card: '#111315',
     border: '#1F2326',
-    tint: '#7FA3FF',               // litt lysere i dark
+    tint: '#7FA3FF',               
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: '#7FA3FF',
@@ -54,7 +54,7 @@ export const radius = {
   md: 12,
   lg: 16,
   xl: 24,
-  full: 999, // brukt til runde avatarer
+  full: 999, // runde avatarer
 };
 
 export const spacing = {
@@ -73,7 +73,7 @@ export const font = {
   small: 14,
 };
 
-/** Plattformspesifikke fontfamilier (samme navn som før) */
+/** plattformspesifikke fontfamiliers  */
 export const Fonts = Platform.select({
   ios: {
     sans: 'system-ui',
@@ -95,7 +95,7 @@ export const Fonts = Platform.select({
   },
 });
 
-/** Enkel hook for å hente riktig palett i komponenter */
+/** enkel hook for å hente farge*/
 export function useThemeColors() {
   const nativeScheme = useColorScheme(); // 'light' | 'dark'
   // 👇 bruk alltid lysmodus i web for å unngå svart på svart
@@ -105,7 +105,7 @@ export function useThemeColors() {
 }
 
 
-/** React Navigation-tema (arver fra default for å beholde fonts.bold osv.) */
+/** React Navigation-tema  */
 export const navLight: Theme = {
   ...DefaultTheme,
   colors: {
