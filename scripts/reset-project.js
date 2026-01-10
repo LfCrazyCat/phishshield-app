@@ -3,7 +3,7 @@
  * This script is part of the default Expo template.
  * It is not used in the PhishShield project and can be safely removed.
  */
-#!/usr/bin/env node
+/usr/bin/env node
 
 
 
